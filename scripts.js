@@ -139,3 +139,16 @@ function init() {
 
 // Call init when the page loads
 window.onload = init;
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./serviceworker.js")
+      .then(() => {
+        console.log("✅ Service Worker registered");
+      })
+      .catch(err => {
+        console.error("❌ Service Worker registration failed:", err);
+      });
+  });
+}

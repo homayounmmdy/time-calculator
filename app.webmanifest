@@ -27,11 +27,13 @@
     "screenshots": [
         {
             "src": "images/screen1.jpg",
-            "type": "image/jpeg"
+            "type": "image/jpeg",
+            "description": "The time calculator form"
         },
         {
             "src": "images/screen2.jpg",
-            "type": "image/jpeg"
+            "type": "image/jpeg",
+            "description": "List of the tasks"
         }
     ]
 }
