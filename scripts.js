@@ -1,5 +1,6 @@
 let timeEntries = [];
 let totalMinutes = 0;
+let editingId = null;
 
 // Load data from local storage when the page loads
 function loadFromLocalStorage() {
@@ -9,7 +10,7 @@ function loadFromLocalStorage() {
     // Recalculate total minutes
     totalMinutes = timeEntries.reduce(
       (total, entry) => total + entry.totalMinutes,
-      0
+      0,
     );
   }
 }
@@ -30,30 +31,51 @@ function addTime() {
   }
 
   if (hours === 0 && minutes === 0) {
-    alert("Please enter a valid time (hours and/or minutes).");
-    return;
-  } else if (minutes > 59) {
-    alert("Please enter between 1 to 59 for minutes");
-    return;
-  } else if (hours > 999) {
-    alert("The maximum hour for each task is under 1000 hours");
+    alert("Please enter a valid time.");
     return;
   }
 
-  const entry = {
-    id: Date.now(),
-    title: title,
-    hours: hours,
-    minutes: minutes,
-    totalMinutes: hours * 60 + minutes,
-  };
+  if (minutes > 59 || hours > 999) {
+    alert("Invalid time values.");
+    return;
+  }
 
-  timeEntries.push(entry);
-  totalMinutes += entry.totalMinutes;
+  // 🔄 EDIT MODE
+  if (editingId !== null) {
+    const entry = timeEntries.find((e) => e.id === editingId);
+
+    // remove old total
+    totalMinutes -= entry.totalMinutes;
+
+    // update entry
+    entry.title = title;
+    entry.hours = hours;
+    entry.minutes = minutes;
+    entry.totalMinutes = hours * 60 + minutes;
+
+    // add new total
+    totalMinutes += entry.totalMinutes;
+
+    editingId = null;
+    document.querySelector(".btn").textContent = "Add Time";
+  }
+  // ➕ ADD MODE
+  else {
+    const entry = {
+      id: Date.now(),
+      title,
+      hours,
+      minutes,
+      totalMinutes: hours * 60 + minutes,
+    };
+
+    timeEntries.push(entry);
+    totalMinutes += entry.totalMinutes;
+  }
 
   updateDisplay();
   clearInputs();
-  saveToLocalStorage(); // Save after adding
+  saveToLocalStorage();
 }
 
 function deleteTime(id) {
@@ -72,6 +94,8 @@ function clearAll() {
     totalMinutes = 0;
     updateDisplay();
     saveToLocalStorage(); // Save after clearing
+    editingId = null;
+    document.querySelector(".btn").textContent = "Add Time";
   }
 }
 
@@ -100,22 +124,34 @@ function updateTimesList() {
     listElement.innerHTML = timeEntries
       .map(
         (entry) => `
-                    <div class="time-entry">
-                        <div class="time-entry-title">${entry.title}</div>
-                        <div class="time-entry-time">${entry.hours
-                          .toString()
-                          .padStart(2, "0")}:${entry.minutes
-          .toString()
-          .padStart(2, "0")}</div>
-                        <button class="delete-btn" onclick="deleteTime(${
-                          entry.id
-                        })">×</button>
-                    </div>
-                `
+      <div class="time-entry">
+        <div class="time-entry-title">${entry.title}</div>
+        <div class="time-entry-time">
+          ${entry.hours.toString().padStart(2, "0")}:${entry.minutes
+            .toString()
+            .padStart(2, "0")}
+        </div>
+
+        <button class="edit-btn" onclick="editTime(${entry.id})">✏️</button>
+        <button class="delete-btn" onclick="deleteTime(${entry.id})">×</button>
+      </div>
+    `,
       )
       .join("");
     clearBtn.style.display = "block";
   }
+}
+
+function editTime(id) {
+  const entry = timeEntries.find((e) => e.id === id);
+  if (!entry) return;
+
+  document.getElementById("title").value = entry.title;
+  document.getElementById("hours").value = entry.hours;
+  document.getElementById("minutes").value = entry.minutes;
+
+  editingId = id;
+  document.querySelector(".btn").textContent = "Update Time";
 }
 
 function clearInputs() {
@@ -140,6 +176,7 @@ function init() {
 // Call init when the page loads
 window.onload = init;
 
+// register the service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -147,7 +184,7 @@ if ("serviceWorker" in navigator) {
       .then(() => {
         console.log("✅ Service Worker registered");
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("❌ Service Worker registration failed:", err);
       });
   });
