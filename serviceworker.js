@@ -6,43 +6,46 @@ const ASSETS_TO_CACHE = [
   "./styles.css",
   "./scripts.js",
   "./app.webmanifest",
+  "./images/icons/android-chrome-192x192.png",
+  "./images/icons/android-chrome-512x512.png",
+  "./images/icons/maskable_icon.png",
   "./images/favicon.ico",
   "./images/icons/favicon-16x16.png",
   "./images/icons/favicon-32x32.png",
-  "./images/icons/apple-touch-icon.png"
+  "./images/icons/apple-touch-icon.png",
 ];
 
 // Install → cache files
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
+    caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    })
+    }),
   );
   self.skipWaiting();
 });
 
 // Activate → clean old caches
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
+    caches.keys().then((keys) =>
       Promise.all(
-        keys.map(key => {
+        keys.map((key) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
   self.clients.claim();
 });
 
 // Fetch → offline support
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
+    caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request);
-    })
+    }),
   );
 });

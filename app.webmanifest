@@ -1,39 +1,42 @@
 {
-    "name": "Time Calculator",
-    "short_name": "TimeCalculator",
-    "theme_color": "#4579ff",
-    "display": "standalone",
-    "background_color": "#4579ff",
-    "start_url": "/",
-    "scope": "/",
-    "description": "The app for calculator the amount of time during day for your tasks.",
-    "icons": [
-        {
-            "src": "images/icons/icon-maskable.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src":"/android-chrome-192x192.png",
-            "sizes":"192x192",
-            "type":"image/png"
-        },{
-            "src":"/android-chrome-512x512.png",
-            "sizes":"512x512",
-            "type":"image/png"
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "images/screen1.jpg",
-            "type": "image/jpeg",
-            "description": "The time calculator form"
-        },
-        {
-            "src": "images/screen2.jpg",
-            "type": "image/jpeg",
-            "description": "List of the tasks"
-        }
-    ]
+  "name": "Time Calculator",
+  "short_name": "TimeCalculator",
+  "theme_color": "#4579ff",
+  "display": "standalone",
+  "background_color": "#4579ff",
+  "start_url": "/",
+  "scope": "/",
+  "description": "The app for calculator the amount of time during day for your tasks.",
+  "icons": [
+    {
+      "src": "images/icons/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/screen1.jpg",
+      "type": "image/jpeg",
+      "description": "The time calculator form"
+    },
+    {
+      "src": "images/screen2.jpg",
+      "type": "image/jpeg",
+      "description": "List of the tasks"
+    }
+  ]
 }
