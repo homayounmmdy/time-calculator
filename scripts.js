@@ -26,17 +26,17 @@ function addTime() {
   const minutes = parseInt(document.getElementById("minutes").value) || 0;
 
   if (!title) {
-    alert("Please enter a title for this time entry.");
+    showAlert("Please enter a title for this time entry.");
     return;
   }
 
   if (hours === 0 && minutes === 0) {
-    alert("Please enter a valid time.");
+    showAlert("Please enter a valid time.");
     return;
   }
 
   if (minutes > 59 || hours > 999) {
-    alert("Invalid time values.");
+    showAlert("Invalid time values.");
     return;
   }
 
@@ -175,6 +175,40 @@ function init() {
 
 // Call init when the page loads
 window.onload = init;
+
+function showAlert(message) {
+  const modal = document.getElementById("customAlert");
+  const messageEl = document.getElementById("alertMessage");
+  const closeBtn = document.getElementById("alertCloseBtn");
+
+  messageEl.textContent = message;
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+
+  // Close on button click
+  closeBtn.onclick = () => {
+    modal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+  };
+
+  // Close on clicking outside content
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+    }
+  };
+
+  // Close on Escape key
+  const handleEsc = (e) => {
+    if (e.key === "Escape") {
+      modal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+      window.removeEventListener("keydown", handleEsc);
+    }
+  };
+  window.addEventListener("keydown", handleEsc);
+}
 
 // register the service worker
 if ("serviceWorker" in navigator) {

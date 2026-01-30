@@ -446,6 +446,74 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* Custom Alert Modal */
+.custom-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.custom-alert.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.custom-alert-content {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 32px;
+  max-width: 90%;
+  width: 320px;
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  position: relative;
+}
+
+.custom-alert-content p {
+  margin-bottom: 24px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.alert-btn {
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.8) 0%, rgba(200, 50, 40, 0.8) 100%);
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 12px rgba(255, 69, 58, 0.2);
+}
+
+.alert-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 69, 58, 0.9) 0%, rgba(200, 50, 40, 0.9) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(255, 69, 58, 0.3);
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .container {
