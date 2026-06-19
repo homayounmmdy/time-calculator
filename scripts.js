@@ -124,17 +124,27 @@ function updateTimesList() {
     listElement.innerHTML = timeEntries
       .map(
         (entry) => `
-      <div class="time-entry">
-        <div class="time-entry-title">${entry.title}</div>
-        <div class="time-entry-time">
-          ${entry.hours.toString().padStart(2, "0")}:${entry.minutes
-            .toString()
-            .padStart(2, "0")}
+      <li class="time-entry" data-entryid="${entry.id}">
+        <!-- Hidden backgrounds revealed during swipe -->
+        <div class="swipe-bg swipe-bg-delete">
+          <div class="swipe-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </div>
         </div>
-
-        <button class="edit-btn" onclick="editTime(${entry.id})">✏️</button>
-        <button class="delete-btn" onclick="deleteTime(${entry.id})">×</button>
-      </div>
+        <div class="swipe-bg swipe-bg-edit">
+          <div class="swipe-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
+        </div>
+        
+        <!-- Wrapper for the sliding content -->
+        <div class="time-entry-content">
+          <div class="time-entry-title">${entry.title}</div>
+          <div class="time-entry-time">
+            ${entry.hours.toString().padStart(2, "0")}:${entry.minutes.toString().padStart(2, "0")}
+          </div>
+        </div>
+      </li>
     `,
       )
       .join("");
@@ -222,4 +232,224 @@ if ("serviceWorker" in navigator) {
         console.error("❌ Service Worker registration failed:", err);
       });
   });
+}
+
+const timeEntriesList = document.getElementById("timesList");
+let startX = 0;
+let startY = 0;
+let currentX = 0;
+let isDragging = false;
+let currentTimeEntry = null;
+let currentContent = null;
+
+// --- TOUCH EVENTS (Mobile) ---
+timeEntriesList.addEventListener(
+  "touchstart",
+  (e) => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    currentTimeEntry = e.target.closest("li.time-entry");
+
+    if (currentTimeEntry) {
+      currentContent = currentTimeEntry.querySelector(".time-entry-content");
+      isDragging = true;
+      currentContent.style.transition = "none";
+      currentContent.classList.add("is-dragging"); // Lift the card
+    }
+  },
+  { passive: true },
+);
+
+timeEntriesList.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!isDragging || !currentContent) return;
+
+    const touch = e.touches[0];
+    currentX = touch.clientX;
+    const diffX = currentX - startX;
+    const diffY = touch.clientY - startY;
+
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
+      isDragging = false;
+      currentContent.style.transition = "transform 0.3s ease";
+      currentContent.style.transform = `translateX(0)`;
+      currentContent.classList.remove("is-dragging"); // Drop the card
+      return;
+    }
+
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+      e.preventDefault();
+    }
+
+    let translateX = diffX;
+    const maxDrag = 120;
+    if (Math.abs(translateX) > maxDrag) {
+      translateX = Math.sign(translateX) * maxDrag;
+    }
+
+    currentContent.style.transform = `translateX(${translateX}px)`;
+
+    // --- VISUAL FEEDBACK: Trigger "active" state if threshold reached ---
+    const deleteBg = currentTimeEntry.querySelector(".swipe-bg-delete");
+    const editBg = currentTimeEntry.querySelector(".swipe-bg-edit");
+
+    if (translateX > 60) {
+      deleteBg.classList.add("active");
+      editBg.classList.remove("active");
+    } else if (translateX < -60) {
+      editBg.classList.add("active");
+      deleteBg.classList.remove("active");
+    } else {
+      deleteBg.classList.remove("active");
+      editBg.classList.remove("active");
+    }
+  },
+  { passive: false },
+);
+
+timeEntriesList.addEventListener("touchend", (e) => {
+  if (!isDragging || !currentContent || !currentTimeEntry) return;
+
+  isDragging = false;
+  currentContent.classList.remove("is-dragging"); // Drop the card
+
+  const endX = e.changedTouches[0].clientX;
+  const diff = endX - startX;
+  const threshold = 80;
+  const entryId = Number(currentTimeEntry.getAttribute("data-entryid"));
+
+  currentContent.style.transition =
+    "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
+  // Clean up active states
+  const deleteBg = currentTimeEntry.querySelector(".swipe-bg-delete");
+  const editBg = currentTimeEntry.querySelector(".swipe-bg-edit");
+  deleteBg.classList.remove("active");
+  editBg.classList.remove("active");
+
+  if (Math.abs(diff) > threshold) {
+    if (diff > 0) {
+      currentContent.style.transform = `translateX(100%)`;
+      setTimeout(() => {
+        deleteTime(entryId);
+      }, 300);
+    } else {
+      currentContent.style.transform = `translateX(-100%)`;
+      setTimeout(() => {
+        editTime(entryId);
+        setTimeout(() => {
+          currentContent.style.transform = `translateX(0)`;
+        }, 200);
+      }, 300);
+    }
+  } else {
+    currentContent.style.transform = `translateX(0)`;
+  }
+
+  currentTimeEntry = null;
+  currentContent = null;
+});
+
+// --- MOUSE EVENTS (Desktop Testing) ---
+timeEntriesList.addEventListener("mousedown", (e) => {
+  startX = e.clientX;
+  startY = e.clientY;
+  currentTimeEntry = e.target.closest("li.time-entry");
+
+  if (currentTimeEntry) {
+    currentContent = currentTimeEntry.querySelector(".time-entry-content");
+    isDragging = true;
+    currentContent.style.transition = "none";
+    currentContent.classList.add("is-dragging"); // Lift the card
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }
+});
+
+function handleMouseMove(e) {
+  if (!isDragging || !currentContent) return;
+
+  currentX = e.clientX;
+  const diffX = currentX - startX;
+  const diffY = e.clientY - startY;
+
+  if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
+    isDragging = false;
+    currentContent.style.transition = "transform 0.3s ease";
+    currentContent.style.transform = `translateX(0)`;
+    currentContent.classList.remove("is-dragging"); // Drop the card
+    return;
+  }
+
+  let translateX = diffX;
+  const maxDrag = 120;
+  if (Math.abs(translateX) > maxDrag) {
+    translateX = Math.sign(translateX) * maxDrag;
+  }
+
+  currentContent.style.transform = `translateX(${translateX}px)`;
+
+  // --- VISUAL FEEDBACK: Trigger "active" state if threshold reached ---
+  const deleteBg = currentTimeEntry.querySelector(".swipe-bg-delete");
+  const editBg = currentTimeEntry.querySelector(".swipe-bg-edit");
+
+  if (translateX > 60) {
+    deleteBg.classList.add("active");
+    editBg.classList.remove("active");
+  } else if (translateX < -60) {
+    editBg.classList.add("active");
+    deleteBg.classList.remove("active");
+  } else {
+    deleteBg.classList.remove("active");
+    editBg.classList.remove("active");
+  }
+}
+
+function handleMouseUp(e) {
+  if (!isDragging || !currentContent || !currentTimeEntry) return;
+
+  isDragging = false;
+  currentContent.classList.remove("is-dragging"); // Drop the card
+
+  const endX = e.clientX;
+  const diff = endX - startX;
+  const threshold = 80;
+  const entryId = Number(currentTimeEntry.getAttribute("data-entryid"));
+
+  currentContent.style.transition =
+    "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
+  // Clean up active states
+  const deleteBg = currentTimeEntry.querySelector(".swipe-bg-delete");
+  const editBg = currentTimeEntry.querySelector(".swipe-bg-edit");
+  deleteBg.classList.remove("active");
+  editBg.classList.remove("active");
+
+  if (Math.abs(diff) > threshold) {
+    if (diff > 0) {
+      currentContent.style.transform = `translateX(100%)`;
+      setTimeout(() => {
+        deleteTime(entryId);
+      }, 300);
+    } else {
+      currentContent.style.transform = `translateX(-100%)`;
+      setTimeout(() => {
+        editTime(entryId);
+        setTimeout(() => {
+          currentContent.style.transform = `translateX(0)`;
+        }, 200);
+      }, 300);
+    }
+  } else {
+    currentContent.style.transform = `translateX(0)`;
+  }
+
+  currentTimeEntry = null;
+  currentContent = null;
+
+  document.removeEventListener("mousemove", handleMouseMove);
+  document.removeEventListener("mouseup", handleMouseUp);
 }
