@@ -1,6 +1,7 @@
 let timeEntries = [];
 let totalMinutes = 0;
 let editingId = null;
+let openEntryId = null;
 
 // Load data from local storage when the page loads
 function loadFromLocalStorage() {
@@ -79,6 +80,9 @@ function addTime() {
 }
 
 function deleteTime(id) {
+  if (openEntryId === id) {
+    openEntryId = null;
+  }
   const entryIndex = timeEntries.findIndex((entry) => entry.id === id);
   if (entryIndex > -1) {
     totalMinutes -= timeEntries[entryIndex].totalMinutes;
@@ -95,6 +99,7 @@ function clearAll() {
     updateDisplay();
     saveToLocalStorage(); // Save after clearing
     editingId = null;
+    openEntryId = null;
     document.querySelector(".btn").textContent = "Add Time";
   }
 }
@@ -143,6 +148,8 @@ function updateTimesList() {
           <div class="time-entry-time">
             ${entry.hours.toString().padStart(2, "0")}:${entry.minutes.toString().padStart(2, "0")}
           </div>
+          <button class="edit-btn" onclick="editTime(${entry.id})">✏️</button>
+        <button class="delete-btn" onclick="deleteTime(${entry.id})">×</button>
         </div>
       </li>
     `,
@@ -153,6 +160,19 @@ function updateTimesList() {
 }
 
 function editTime(id) {
+  if (openEntryId !== null && openEntryId !== id) {
+    const prevEntry = document.querySelector(
+      `li[data-entryid="${openEntryId}"] .time-entry-content`,
+    );
+    if (prevEntry) {
+      prevEntry.style.transition =
+        "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+      prevEntry.style.transform = `translateX(0)`;
+    }
+  }
+
+  openEntryId = id;
+
   const entry = timeEntries.find((e) => e.id === id);
   if (!entry) return;
 
@@ -252,10 +272,25 @@ timeEntriesList.addEventListener(
     currentTimeEntry = e.target.closest("li.time-entry");
 
     if (currentTimeEntry) {
+      const currentId = Number(currentTimeEntry.getAttribute("data-entryid"));
+
+      // 🔄 SNAP BACK PREVIOUS CARD IF USER TOUCHES A NEW ONE
+      if (openEntryId !== null && openEntryId !== currentId) {
+        const prevEntry = document.querySelector(
+          `li[data-entryid="${openEntryId}"] .time-entry-content`,
+        );
+        if (prevEntry) {
+          prevEntry.style.transition =
+            "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+          prevEntry.style.transform = `translateX(0)`;
+        }
+        openEntryId = null;
+      }
+
       currentContent = currentTimeEntry.querySelector(".time-entry-content");
       isDragging = true;
       currentContent.style.transition = "none";
-      currentContent.classList.add("is-dragging"); // Lift the card
+      currentContent.classList.add("is-dragging");
     }
   },
   { passive: true },
@@ -359,13 +394,25 @@ timeEntriesList.addEventListener("mousedown", (e) => {
   currentTimeEntry = e.target.closest("li.time-entry");
 
   if (currentTimeEntry) {
+    const currentId = Number(currentTimeEntry.getAttribute("data-entryid"));
+
+    // 🔄 SNAP BACK PREVIOUS CARD IF USER TOUCHES A NEW ONE
+    if (openEntryId !== null && openEntryId !== currentId) {
+      const prevEntry = document.querySelector(
+        `li[data-entryid="${openEntryId}"] .time-entry-content`,
+      );
+      if (prevEntry) {
+        prevEntry.style.transition =
+          "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+        prevEntry.style.transform = `translateX(0)`;
+      }
+      openEntryId = null;
+    }
+
     currentContent = currentTimeEntry.querySelector(".time-entry-content");
     isDragging = true;
     currentContent.style.transition = "none";
-    currentContent.classList.add("is-dragging"); // Lift the card
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    currentContent.classList.add("is-dragging");
   }
 });
 

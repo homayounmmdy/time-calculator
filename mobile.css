@@ -1,0 +1,122 @@
+@media (width < 576px) {
+  .edit-btn,
+  .delete-btn {
+    display: none;
+  }
+
+  .time-inputs {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .time-entry {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 6px;
+  }
+
+  .time-entry-time {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+  .time-entry {
+    position: relative;
+  }
+  .times-list,
+  .time-entry-content {
+    padding: 12px;
+  }
+
+  .swipe-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    /* Smooth "pop" animation */
+    transition:
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.25s ease,
+      background 0.25s ease,
+      box-shadow 0.25s ease;
+    opacity: 0.8;
+    transform: scale(0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  /* When swiped enough, the icon pops and glows */
+  .swipe-bg.active .swipe-icon {
+    transform: scale(1.15);
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 0 20px rgba(255, 255, 255, 0.4),
+      0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  /* --- MODERN SWIPE BACKGROUNDS --- */
+  .swipe-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    overflow: hidden;
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  /* Delete Background (Left) */
+  .swipe-bg-delete {
+    padding-left: 24px; /* Push icon slightly from the edge */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 59, 48, 0.85) 0%,
+      rgba(200, 30, 20, 0.85) 100%
+    );
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Edit Background (Right) */
+  .swipe-bg-edit {
+    padding-right: 12px; /* Push icon slightly from the edge */
+    justify-content: flex-end;
+    background: linear-gradient(
+      135deg,
+      rgba(88, 86, 214, 0.85) 0%,
+      rgba(0, 122, 255, 0.85) 100%
+    );
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Active state when threshold is reached (Intensifies colors) */
+  .swipe-bg.active.swipe-bg-delete {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 59, 48, 1) 0%,
+      rgba(220, 30, 20, 1) 100%
+    ) !important;
+    box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .swipe-bg.active.swipe-bg-edit {
+    background: linear-gradient(
+      135deg,
+      rgba(88, 86, 214, 1) 0%,
+      rgba(0, 122, 255, 1) 100%
+    );
+    box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15);
+  }
+}
