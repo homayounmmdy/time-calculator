@@ -92,19 +92,6 @@ function deleteTime(id) {
   }
 }
 
-function clearAll() {
-  showCustomConfirm("Are you sure you want to clear all time entries?", () => {
-    // This callback runs when user confirms
-    timeEntries = [];
-    totalMinutes = 0;
-    updateDisplay();
-    saveToLocalStorage();
-    editingId = null;
-    openEntryId = null;
-    document.querySelector(".btn").textContent = "Add Time";
-  });
-}
-
 function updateDisplay() {
   updateTotalTime();
   updateTimesList();
@@ -207,108 +194,10 @@ function init() {
 // Call init when the page loads
 window.onload = init;
 
-// New function for custom confirm dialog with Cancel button
-function showCustomConfirm(message, onConfirm) {
-  const modal = document.getElementById("customAlert");
-  const messageEl = document.getElementById("alertMessage");
-  
-  // Clear existing content and rebuild with buttons
-  const content = modal.querySelector('.custom-alert-content');
-  
-  // Remove old buttons container if exists
-  const oldButtons = content.querySelector('.custom-alert-buttons');
-  if (oldButtons) {
-    oldButtons.remove();
-  }
-  
-  // Remove old icon if exists
-  const oldIcon = content.querySelector('.custom-alert-icon');
-  if (oldIcon) {
-    oldIcon.remove();
-  }
-  
-  // Remove old h3 if exists
-  const oldTitle = content.querySelector('h3');
-  if (oldTitle) {
-    oldTitle.remove();
-  }
-  
-  // Add icon
-  const icon = document.createElement('span');
-  icon.className = 'custom-alert-icon';
-  icon.textContent = '⚠️';
-  content.insertBefore(icon, content.firstChild);
-  
-  // Add title
-  const title = document.createElement('h3');
-  title.textContent = 'Confirm Action';
-  content.insertBefore(title, messageEl);
-  
-  // Update message
-  messageEl.textContent = message;
-  
-  // Create buttons container
-  const buttonsContainer = document.createElement('div');
-  buttonsContainer.className = 'custom-alert-buttons';
-  
-  // Cancel button
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = 'btn btn-cancel';
-  cancelBtn.textContent = 'Cancel';
-  cancelBtn.type = 'button';
-  
-  // Confirm button
-  const confirmBtn = document.createElement('button');
-  confirmBtn.className = 'btn btn-confirm';
-  confirmBtn.textContent = 'Clear All';
-  confirmBtn.type = 'button';
-  
-  buttonsContainer.appendChild(cancelBtn);
-  buttonsContainer.appendChild(confirmBtn);
-  
-  // Insert buttons after the message
-  content.insertBefore(buttonsContainer, messageEl.nextSibling);
-  
-  // Show modal
-  modal.classList.add('show');
-  document.body.classList.add('modal-open');
-  
-  // Event handlers
-  const closeModal = () => {
-    modal.classList.remove('show');
-    document.body.classList.remove('modal-open');
-    window.removeEventListener('keydown', handleEsc);
-  };
-  
-  const handleEsc = (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  };
-  
-  // Cancel button - just close
-  cancelBtn.onclick = closeModal;
-  
-  // Confirm button - execute callback and close
-  confirmBtn.onclick = () => {
-    closeModal();
-    if (onConfirm) onConfirm();
-  };
-  
-  // Close on clicking outside
-  modal.onclick = (e) => {
-    if (e.target === modal) {
-      closeModal();
-    }
-  };
-  
-  window.addEventListener('keydown', handleEsc);
-}
-
 // Updated clearAll function
 function clearAll() {
   showCustomConfirm(
-    'This action cannot be undone. All time entries will be permanently deleted.',
+    "This action cannot be undone. All time entries will be permanently deleted.",
     () => {
       timeEntries = [];
       totalMinutes = 0;
@@ -316,70 +205,162 @@ function clearAll() {
       saveToLocalStorage();
       editingId = null;
       openEntryId = null;
-      document.querySelector('.btn').textContent = 'Add Time';
-    }
+      document.querySelector(".btn").textContent = "Add Time";
+    },
   );
 }
 
-function showAlert(message) {
-  const modal = document.getElementById('customAlert');
-  const messageEl = document.getElementById('alertMessage');
-  
-  // Reset to simple alert view
-  const content = modal.querySelector('.custom-alert-content');
-  
-  // Remove any existing buttons container
-  const oldButtons = content.querySelector('.custom-alert-buttons');
-  if (oldButtons) {
-    oldButtons.remove();
-  }
-  
-  // Remove old icon if exists
-  const oldIcon = content.querySelector('.custom-alert-icon');
-  if (oldIcon) {
-    oldIcon.remove();
-  }
-  
-  // Remove old h3 if exists
-  const oldTitle = content.querySelector('h3');
-  if (oldTitle) {
-    oldTitle.remove();
-  }
-  
+// New function for custom confirm dialog with Cancel button
+function showCustomConfirm(message, onConfirm) {
+  const modal = document.getElementById("customAlert");
+  const messageEl = document.getElementById("alertMessage");
+  const content = modal.querySelector(".custom-alert-content");
+
+  // Reset the content to its base structure
+  resetModalContent(content);
+
+  // Add icon
+  const icon = document.createElement("span");
+  icon.className = "custom-alert-icon";
+  icon.textContent = "⚠️";
+  content.insertBefore(icon, content.firstChild);
+
+  // Add title
+  const title = document.createElement("h3");
+  title.textContent = "Confirm Action";
+  content.insertBefore(title, messageEl);
+
   // Update message
   messageEl.textContent = message;
-  
-  // Add OK button
-  const okBtn = document.createElement('button');
-  okBtn.className = 'btn alert-btn';
-  okBtn.textContent = 'OK';
-  okBtn.type = 'button';
-  content.appendChild(okBtn);
-  
+
+  // Create buttons container
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.className = "custom-alert-buttons";
+
+  // Cancel button
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "btn btn-cancel";
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.type = "button";
+
+  // Confirm button
+  const confirmBtn = document.createElement("button");
+  confirmBtn.className = "btn btn-confirm";
+  confirmBtn.textContent = "Clear All";
+  confirmBtn.type = "button";
+
+  buttonsContainer.appendChild(cancelBtn);
+  buttonsContainer.appendChild(confirmBtn);
+
+  // Insert buttons after the message
+  content.insertBefore(buttonsContainer, messageEl.nextSibling);
+
   // Show modal
-  modal.classList.add('show');
-  document.body.classList.add('modal-open');
-  
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+
+  // Event handlers
   const closeModal = () => {
-    modal.classList.remove('show');
-    document.body.classList.remove('modal-open');
-    window.removeEventListener('keydown', handleEsc);
+    modal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    window.removeEventListener("keydown", handleEsc);
+    // Reset content after closing
+    setTimeout(() => resetModalContent(content), 300);
   };
-  
+
   const handleEsc = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       closeModal();
     }
   };
-  
+
+  // Cancel button - just close
+  cancelBtn.onclick = closeModal;
+
+  // Confirm button - execute callback and close
+  confirmBtn.onclick = () => {
+    closeModal();
+    if (onConfirm) onConfirm();
+  };
+
+  // Close on clicking outside
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  };
+
+  window.addEventListener("keydown", handleEsc);
+}
+
+// Helper function to reset modal content
+function resetModalContent(content) {
+  // Remove all children except the message paragraph
+  const messageEl = content.querySelector("#alertMessage");
+  content.innerHTML = "";
+  content.appendChild(messageEl);
+}
+
+// Fixed showAlert function - prevents duplicate buttons
+function showAlert(message) {
+  const modal = document.getElementById("customAlert");
+  const messageEl = document.getElementById("alertMessage");
+  const content = modal.querySelector(".custom-alert-content");
+
+  // Reset the content to its base structure
+  resetModalContent(content);
+
+  // Update message
+  messageEl.textContent = message;
+
+  // Create single OK button
+  const okBtn = document.createElement("button");
+  okBtn.className = "btn alert-btn";
+  okBtn.textContent = "OK";
+  okBtn.type = "button";
+  content.appendChild(okBtn);
+
+  // Show modal
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+
+  const closeModal = () => {
+    modal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    window.removeEventListener("keydown", handleEsc);
+    // Reset content after closing
+    setTimeout(() => resetModalContent(content), 300);
+  };
+
+  const handleEsc = (e) => {
+    if (e.key === "Escape") {
+      closeModal();
+    }
+  };
+
   okBtn.onclick = closeModal;
   modal.onclick = (e) => {
     if (e.target === modal) {
       closeModal();
     }
   };
-  
-  window.addEventListener('keydown', handleEsc);
+
+  window.addEventListener("keydown", handleEsc);
+}
+
+function clearAll() {
+  showCustomConfirm(
+    "This action cannot be undone. All time entries will be permanently deleted.",
+    () => {
+      timeEntries = [];
+      totalMinutes = 0;
+      updateDisplay();
+      saveToLocalStorage();
+      editingId = null;
+      openEntryId = null;
+      document.querySelector(".btn").textContent = "Add Time";
+    },
+  );
 }
 
 // register the service worker
