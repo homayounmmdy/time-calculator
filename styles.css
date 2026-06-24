@@ -433,6 +433,8 @@ input::placeholder {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -453,50 +455,168 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 20px;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.2),
+    0 32px 64px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  padding: 32px;
+  padding: 40px 32px 32px;
   max-width: 90%;
-  width: 320px;
+  width: 380px;
   text-align: center;
   color: #ffffff;
-  font-size: 1.1rem;
-  line-height: 1.5;
   position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-alert.show .custom-alert-content {
+  transform: scale(1);
+}
+
+.custom-alert-content::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  border-radius: 24px 24px 0 0;
+}
+
+/* Icon for the alert */
+.custom-alert-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.custom-alert-content h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .custom-alert-content p {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   font-weight: 400;
   letter-spacing: -0.01em;
-}
-
-.alert-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 69, 58, 0.8) 0%,
-    rgba(200, 50, 40, 0.8) 100%
-  );
-  width: 100%;
-  padding: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
   font-size: 1rem;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 12px rgba(255, 69, 58, 0.2);
 }
 
-.alert-btn:hover {
+/* Button container for confirm/cancel */
+.custom-alert-buttons {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+@media (min-width: 400px) {
+  .custom-alert-buttons {
+    flex-direction: row;
+  }
+}
+
+.custom-alert-buttons .btn {
+  flex: 1;
+  padding: 14px 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-align: center;
+  min-width: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Confirm button (danger) */
+.custom-alert-buttons .btn-confirm {
   background: linear-gradient(
     135deg,
     rgba(255, 69, 58, 0.9) 0%,
     rgba(200, 50, 40, 0.9) 100%
   );
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(255, 69, 58, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);
 }
+
+.custom-alert-buttons .btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 69, 58, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 69, 58, 1) 0%,
+    rgba(200, 50, 40, 1) 100%
+  );
+}
+
+.custom-alert-buttons .btn-confirm:active {
+  transform: translateY(0);
+}
+
+/* Cancel button (glassmorphism) */
+.custom-alert-buttons .btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-alert-buttons .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.custom-alert-buttons .btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* Glass shine effect on cancel button */
+.custom-alert-buttons .btn-cancel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.custom-alert-buttons .btn-cancel:hover::before {
+  left: 100%;
+}
+
+
 
 /* Prevent body scroll when modal is open */
 body.modal-open {
