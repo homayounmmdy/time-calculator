@@ -188,6 +188,7 @@ input::placeholder {
   gap: 16px;
 }
 
+/* Main Add/Update Button */
 .btn {
   background: linear-gradient(
     135deg,
@@ -208,6 +209,8 @@ input::placeholder {
   letter-spacing: -0.01em;
   margin-top: 8px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn:hover {
@@ -224,6 +227,27 @@ input::placeholder {
 .btn:active {
   transform: translateY(0);
   box-shadow: 0 4px 8px rgba(0, 122, 255, 0.2);
+}
+
+/* Shine effect for main button */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .total-section {
@@ -351,7 +375,7 @@ input::placeholder {
   align-items: center;
   padding: 16px 20px;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 11px; /* Slightly smaller to fit inside the border */
+  border-radius: 11px;
   transition:
     transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     background 0.3s ease;
@@ -363,18 +387,16 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* --- THE GLASSMORPHIC ICON BADGES --- */
-
 /* --- DRAGGING STATE FOR CONTENT --- */
-/* Adds a premium drop shadow to lift the card while swiping */
 .time-entry-content.is-dragging {
   box-shadow:
     0 20px 40px -10px rgba(0, 0, 0, 0.5),
     0 10px 15px -5px rgba(0, 0, 0, 0.2);
   z-index: 10;
-  background: rgba(255, 255, 255, 0.06); /* Subtle brightening while dragged */
+  background: rgba(255, 255, 255, 0.06);
 }
 
+/* Clear All Button */
 .clear-btn {
   background: #fb4141;
   backdrop-filter: blur(20px);
@@ -390,12 +412,41 @@ input::placeholder {
   margin-top: 16px;
   width: 100%;
   letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
 }
 
 .clear-btn:hover {
-  border-color: rgba(255, 69, 58, 0.5);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(255, 69, 58, 0.2);
+  background: #ff4d4d;
+  border-color: rgba(255, 69, 58, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 69, 58, 0.3);
+}
+
+.clear-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(255, 69, 58, 0.2);
+}
+
+/* Shine effect for clear button */
+.clear-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.clear-btn:hover::before {
+  left: 100%;
 }
 
 .empty-state {
@@ -574,6 +625,27 @@ input::placeholder {
   transform: translateY(0);
 }
 
+/* Shine effect for confirm button */
+.custom-alert-buttons .btn-confirm::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.custom-alert-buttons .btn-confirm:hover::before {
+  left: 100%;
+}
+
 /* Cancel button (glassmorphism) */
 .custom-alert-buttons .btn-cancel {
   background: rgba(255, 255, 255, 0.08);
@@ -595,7 +667,7 @@ input::placeholder {
   transform: translateY(0);
 }
 
-/* Glass shine effect on cancel button */
+/* Shine effect for cancel button */
 .custom-alert-buttons .btn-cancel::before {
   content: "";
   position: absolute;
@@ -616,12 +688,69 @@ input::placeholder {
   left: 100%;
 }
 
+/* OK Button in Alert */
+.alert-btn {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 122, 255, 0.8) 0%,
+    rgba(88, 86, 214, 0.8) 100%
+  );
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
 
+.alert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 122, 255, 0.9) 0%,
+    rgba(88, 86, 214, 0.9) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.alert-btn:active {
+  transform: translateY(0);
+}
+
+/* Shine effect for alert OK button */
+.alert-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.alert-btn:hover::before {
+  left: 100%;
+}
 
 /* Prevent body scroll when modal is open */
 body.modal-open {
   overflow: hidden;
 }
+
+/* Edit and Delete buttons */
 .edit-btn {
   background: rgba(255, 255, 255, 0.06);
   border: none;
@@ -636,12 +765,20 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .edit-btn:hover {
   border: 1px solid #4f46e5;
-  transform: scale(1.05);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  background: rgba(79, 70, 229, 0.1);
 }
+
+.edit-btn:active {
+  transform: scale(0.95);
+}
+
 .delete-btn {
   background: #fb4141;
   backdrop-filter: blur(10px);
@@ -660,9 +797,16 @@ body.modal-open {
 }
 
 .delete-btn:hover {
-  border-color: rgba(255, 69, 58, 0.5);
-  transform: scale(1.05);
+  border-color: rgba(255, 69, 58, 0.6);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);
+  background: #ff4d4d;
 }
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+
 @media (width > 992px) {
   .container {
     padding: 48px;
@@ -677,6 +821,7 @@ body.modal-open {
     gap: 1rem;
   }
 }
+
 @media (min-width: 576px) {
   .container {
     margin-top: 20px;
@@ -684,6 +829,7 @@ body.modal-open {
     border-radius: 28px;
   }
 }
+
 @media (min-width: 576px) and (max-width: 768px) {
   h1 {
     font-size: 2.25rem;
