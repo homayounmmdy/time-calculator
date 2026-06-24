@@ -10,7 +10,6 @@ body {
     Arial, sans-serif;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
   min-height: 100vh;
-  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -64,16 +63,12 @@ body::before {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
     0 32px 64px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  padding: 48px;
-  width: 90%;
-  max-width: 1000px;
-  margin-top: 40px;
   position: relative;
+  padding: 20px;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -368,9 +363,7 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.08);
 }
 
-
 /* --- THE GLASSMORPHIC ICON BADGES --- */
-
 
 /* --- DRAGGING STATE FOR CONTENT --- */
 /* Adds a premium drop shadow to lift the card while swiping */
@@ -526,7 +519,7 @@ body.modal-open {
 }
 
 .edit-btn:hover {
-   border: 1px solid #4f46e5;
+  border: 1px solid #4f46e5;
   transform: scale(1.05);
 }
 .delete-btn {
@@ -550,21 +543,31 @@ body.modal-open {
   border-color: rgba(255, 69, 58, 0.5);
   transform: scale(1.05);
 }
-/* Mobile optimizations */
-@media (max-width: 768px) {
+@media (width > 992px) {
   .container {
-    padding: 32px 24px;
+    padding: 48px;
+    width: 90%;
+    max-width: 1000px;
+    margin-top: 40px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 992px) {
+  .main-layout {
+    gap: 1rem;
+  }
+}
+@media (min-width: 576px) {
+  .container {
     margin-top: 20px;
     width: 95%;
+    border-radius: 28px;
   }
-
+}
+@media (min-width: 576px) and (max-width: 768px) {
   h1 {
     font-size: 2.25rem;
     margin-bottom: 32px;
-  }
-
-  .main-layout {
-    gap: 1.5rem;
   }
 
   .input-section {
@@ -586,6 +589,9 @@ body.modal-open {
 }
 
 @media (width > 576px) {
+  body {
+    padding: 20px;
+  }
   .swipe-bg {
     display: none;
   }

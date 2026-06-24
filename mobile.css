@@ -1,4 +1,11 @@
 @media (width < 576px) {
+  .container {
+    width: 100%;
+    border: none;
+  }
+  .main-title {
+    margin-bottom: 15px;
+  }
   .edit-btn,
   .delete-btn {
     display: none;
